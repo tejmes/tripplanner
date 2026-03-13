@@ -1,0 +1,39 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Přihlášení";
+}
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+<div class="container">
+    <div id="logreg-forms">
+        <form asp-action="Login" method="post" class="form-signin">
+            @Html.AntiForgeryToken()
+            <br />
+            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Přihlásit se</h1>
+            <hr>
+            @{
+                if (Model?.LoginFailed == true)
+                {
+                    <div class="text-danger">Přihlášení se nepovedlo!</div>
+                }
+            }
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="UserName" type="text" id="inputUserName" class="form-control" placeholder="Username" autofocus="">
+            <input asp-for="Password" type="password" id="inputPassword" class="form-control" placeholder="Heslo">
+            <br />
+            <div class="text-center">
+                <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i>Potvrdit</button>
+            </div>
+            <br />
+            <br />
+            <hr>
+            <a asp-action="Register" class="btn btn-primary btn-block text-white" type="button" id="btn-signup"><i class="fas fa-user-plus"></i>Vytvořit nový účet</a>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

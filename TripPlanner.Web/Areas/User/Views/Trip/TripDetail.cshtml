@@ -1,0 +1,86 @@
+﻿@model TripDetailViewModel
+@inject IConfiguration Configuration
+@using System.Globalization
+@{
+    ViewData["Title"] = "Výlet";
+}
+<div class="container-fluid">
+    <div class="row full-height">
+        <div class="col-12 col-md-6 left-col">
+            <div class="row">
+                <div class="col-12 col-md-3 nav-col">
+                    <nav class="navbar navbar-expand-md navbar-light flex-md-column flex-row align-items-start">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tripNavbar">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse flex-column w-100" id="tripNavbar">
+                            <ul class="nav flex-column w-100">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#pane-itinerary">
+                                        <i class="bi bi-globe-americas me-2"></i>Itinerář
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#pane-budget">
+                                        <i class="bi bi-cash-stack me-2"></i>Rozpočet
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#pane-checklist">
+                                        <i class="bi bi-check2-square me-2"></i>Seznamy
+                                    </a>
+                                </li>
+                                <li class="nav-item mt-3">
+                                    <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addCollaboratorModal">
+                                        <i class="bi bi-person-plus me-2"></i>Přidat uživatele
+                                    </button>
+                                </li>
+                                <li class="nav-item mt-2">
+                                    <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#removeCollaboratorModal">
+                                        <i class="bi bi-person-dash me-2"></i>Odebrat uživatele
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <div class="col-12 col-md-9 pt-3">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="pane-itinerary">
+                            @await Html.PartialAsync("_TripItineraryPartial", Model.Itinerary)
+                        </div>
+                        <div class="tab-pane fade" id="pane-budget">
+                            @await Html.PartialAsync("_TripBudgetPartial", Model.Budget)
+                        </div>
+                        <div class="tab-pane fade" id="pane-checklist">
+                            @await Html.PartialAsync("_TripChecklistPartial", Model.Checklists, new ViewDataDictionary(ViewData) { { "TripId", Model.Itinerary.TripId } })
+                        </div>
+
+                        @await Html.PartialAsync("_AddCollaboratorModal", Model)
+                        @await Html.PartialAsync("_RemoveCollaboratorModal", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 p-0">
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        window._tripPlacesJson = '@Html.Raw(Model.TripPlacesJson)';
+        window._accomJson = '@Html.Raw(Model.AccomodationJson)';
+        window._tripDaysListJson = '@Html.Raw(Model.TripDaysListJson)';
+        window._destinationLat = '@Model.DestinationLat';
+        window._destinationLng = '@Model.DestinationLng';
+        window._currentTripId = '@Model.Itinerary.TripId';
+    </script>
+
+    <script src="~/js/add-collaborator.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="~/js/trip-detail.js"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApiKey"]&libraries=places&callback=window.initTripDetail"></script>
+}

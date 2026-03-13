@@ -1,0 +1,25 @@
+﻿@model SettingsViewModel
+@{
+    ViewData["Title"] = "Nastavení";
+}
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+<div class="container">
+    <div id="logreg-forms">
+        <form asp-action="UpdateSettings" method="post" class="form-signup">
+            @Html.AntiForgeryToken()
+            <h1 class="h3 mb-3 font-weight-normal text-center">Nastavení</h1>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="UserName" type="text" id="user-name" class="form-control" placeholder="Username" autofocus="">
+            <input asp-for="FirstName" type="text" id="first-name" class="form-control" placeholder="Jméno">
+            <input asp-for="LastName" type="text" id="last-name" class="form-control" placeholder="Přijmení">
+            <input asp-for="Email" type="email" id="user-email" class="form-control" placeholder="Email">
+            <br />
+            <div class="text-center">
+                <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i>Potvrdit</button>
+            </div>
+        </form>
+    </div>
+</div>

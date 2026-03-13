@@ -1,0 +1,175 @@
+﻿@model ItineraryViewModel
+@using System.Globalization
+<div class="mb-3">
+    <h1 id="nameDisplay" class="mb-1" style="cursor:pointer;">
+        @Model.Name
+    </h1>
+    <form id="nameEditForm" asp-area="User" asp-controller="Trip" asp-action="UpdateName" method="post" class="d-none d-flex align-items-center" style="gap: 0.5rem;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="tripId" value="@Model.TripId" />
+        <input type="text" name="newName" class="form-control form-control-sm" style="width:auto; display:inline-block;" value="@Model.Name" />
+        <button type="submit" class="btn btn-sm btn-primary">✓</button>
+        <button type="button" id="cancelNameEdit" class="btn btn-sm btn-outline-secondary">×</button>
+    </form>
+    <div id="dateDisplay" class="text-secondary mt-1" style="cursor:pointer;">
+        <i class="bi bi-calendar-event me-1"></i>
+        @Model.StartDate.ToString("d/M") – @Model.EndDate.ToString("d/M")
+    </div>
+    <form id="dateEditForm" asp-area="User" asp-controller="Trip" asp-action="UpdateDates" method="post" class="d-none mt-2 row g-2 align-items-center" style="max-width: 400px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="tripId" value="@Model.TripId" />
+        <div class="col-auto">
+            <input type="date" name="startDate" class="form-control form-control-sm" value="@(Model.StartDate.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-auto">
+            <input type="date" name="endDate" class="form-control form-control-sm" value="@(Model.EndDate.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-primary">✓</button>
+        </div>
+        <div class="col-auto">
+            <button type="button" id="cancelDateEdit" class="btn btn-sm btn-outline-secondary">×</button>
+        </div>
+    </form>
+</div>
+
+<div class="mb-4">
+    <h5>Popis</h5>
+    <form asp-area="User" asp-controller="Trip" asp-action="UpdateDescription" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="tripId" value="@Model.TripId" />
+        <textarea name="description" class="form-control bg-light" rows="4" onblur="this.form.submit()">@Model.Description</textarea>
+    </form>
+</div>
+
+<div class="mb-4">
+    <h5>Ubytování</h5>
+    @if (Model.Accomodation != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body d-flex align-items-center">
+                <i class="bi bi-house-door me-2"></i>
+                <div>
+                    <div><strong>@Model.Accomodation.Name</strong></div>
+                    <div class="text-muted small">
+                        <span id="checkinDisplay" class="me-3" style="cursor:pointer;">
+                            <strong>Check in:</strong> @Model.Accomodation.CheckIn?.ToString("HH:mm")
+                        </span>
+                        <span id="checkoutDisplay" style="cursor:pointer;">
+                            <strong>Check out:</strong> @Model.Accomodation.CheckOut?.ToString("HH:mm")
+                        </span>
+                    </div>
+                </div>
+                <form id="timesEditForm" asp-area="User" asp-controller="Accomodation" asp-action="UpdateAccomodationTimes" method="post" class="ms-auto d-none d-flex align-items-center g-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tripId" value="@Model.TripId" />
+                    <input type="hidden" name="accomodationId" value="@Model.Accomodation.Id" />
+                    <div class="me-2">
+                        <input type="time" name="checkIn" class="form-control form-control-sm" value="@(Model.Accomodation.CheckIn?.ToString("HH\\:mm"))" />
+                    </div>
+                    <div class="me-2">
+                        <input type="time" name="checkOut" class="form-control form-control-sm" value="@(Model.Accomodation.CheckOut?.ToString("HH\\:mm"))" />
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary me-1">Uložit</button>
+                    <button type="button" id="cancelTimesEdit" class="btn btn-sm btn-outline-secondary">Zrušit</button>
+                </form>
+            </div>
+        </div>
+    }
+    <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-house-door"></i></span>
+        <input type="text" id="accomodationInput" class="form-control accomodation-place-input" placeholder="Kde budete ubytováni?" />
+    </div>
+</div>
+
+<div class="mb-3 d-flex align-items-center">
+    <span class="me-2 fw-bold">Mód cesty:</span>
+    <div class="btn-group" role="group" id="travelModeSwitcher">
+        <button type="button" class="btn btn-outline-primary active" data-mode="WALKING">Pěšky</button>
+        <button type="button" class="btn btn-outline-primary" data-mode="DRIVING">Autem</button>
+        <button type="button" class="btn btn-outline-primary" data-mode="TRANSIT">MHD</button>
+    </div>
+</div>
+
+@functions {
+    string GetWeatherIcon(int weatherCode) => weatherCode switch
+    {
+        0 or 1 => "clear-day.svg",
+        2 or 3 => "partly-cloudy-day.svg",
+        45 or 48 => "fog.svg",
+        51 or 53 or 55 => "drizzle.svg",
+        56 or 57 => "sleet.svg",
+        61 or 63 or 65 => "rain.svg",
+        66 or 67 => "sleet.svg",
+        71 or 73 or 75 or 77 => "snow.svg",
+        80 or 81 or 82 => "rain.svg",
+        85 or 86 => "snow.svg",
+        95 => "thunderstorms.svg",
+        96 or 99 => "thunderstorms-extreme.svg",
+        _ => "unknown.svg"
+    };
+
+    string GetWeatherDescription(int weatherCode) => weatherCode switch
+    {
+        0 => "Jasno",
+        1 or 2 or 3 => "Polojasno až zataženo",
+        45 or 48 => "Mlha",
+        51 or 53 or 55 => "Mrholení",
+        56 or 57 => "Námraza",
+        61 or 63 or 65 => "Déšť",
+        66 or 67 => "Ledový déšť",
+        71 or 73 or 75 or 77 => "Sníh",
+        80 or 81 or 82 => "Přeháňky",
+        85 or 86 => "Sněhové přeháňky",
+        95 => "Bouřky",
+        96 or 99 => "Silné bouřky",
+        _ => "Neznámé počasí"
+    };
+}
+
+@foreach (var day in Model.TripDays.OrderBy(d => d.Date))
+{
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-white d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">@day.Date?.ToString("dddd, dd MMMM")</h5>
+            @if (day.TempMax.HasValue && day.TempMin.HasValue && day.WeatherCode.HasValue)
+            {
+                <div class="weather-info">
+                    <span class="fw-bold me-2">@day.TempMax.Value.ToString("F0")°C / @day.TempMin.Value.ToString("F0")°C</span>
+                    <img src="@Url.Content($"~/images/weather/{GetWeatherIcon(day.WeatherCode.Value)}")" alt="@GetWeatherDescription(day.WeatherCode.Value)" title="@GetWeatherDescription(day.WeatherCode.Value)" style="width:36px;height:36px;" />
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <ul id="places-day-@day.Id" class="list-group mb-3">
+                @if (!day.Places.Any())
+                {
+                    <li class="list-group-item empty-dropzone"></li>
+                }
+                @foreach (var place in day.Places.OrderBy(p => p.OrderIndex))
+                {
+                    <li class="list-group-item place-item d-flex justify-content-between align-items-center" data-id="@place.Id" data-lat="@place.Location.Latitude.ToString("G", CultureInfo.InvariantCulture)" data-lng="@place.Location.Longitude.ToString("G", CultureInfo.InvariantCulture)">
+                        <span><i class="bi bi-geo-alt me-2"></i>@place.Name</span>
+                        <form asp-area="User" asp-controller="Place" asp-action="Delete" asp-route-placeId="@place.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">&times;</button>
+                        </form>
+                    </li>
+                    @if (place != day.Places.OrderBy(p => p.OrderIndex).Last())
+                    {
+                        <li class="list-group-item leg-info small text-muted">
+                            <i class="bi bi-walk me-1"></i>
+                            <span class="leg-text">Načítám…</span>
+                            <a href="#" target="_blank" class="ms-auto leg-directions d-none">Zobrazit trasu</a>
+                        </li>
+                    }
+                }
+            </ul>
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                <input type="text" class="form-control google-place-input" placeholder="Přidejte místo" data-trip-day-id="@day.Id" />
+            </div>
+            <div id="distances-day-@day.Id" class="mt-2 text-muted"></div>
+        </div>
+    </div>
+}

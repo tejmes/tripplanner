@@ -1,0 +1,39 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Registrace";
+}
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+<div class="container">
+    <div id="logreg-forms">
+        <form asp-action="Register" method="post" class="form-signup">
+            @Html.AntiForgeryToken()
+            <br />
+            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Registrace</h1>
+            <hr>
+
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <input asp-for="UserName" type="text" id="user-name" class="form-control" placeholder="Username" autofocus="">
+            <input asp-for="FirstName" type="text" id="first-name" class="form-control" placeholder="Jméno">
+            <input asp-for="LastName" type="text" id="last-name" class="form-control" placeholder="Přijmení">
+            <input asp-for="Email" type="email" id="user-email" class="form-control" placeholder="Email">
+            <br />
+            <input asp-for="Password" type="password" id="user-pass" class="form-control" placeholder="Heslo">
+            <input asp-for="RepeatedPassword" type="password" id="user-repeatpass" class="form-control" placeholder="Potvrzení hesla">
+            <br />
+            <div class="text-center">
+                <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i>Potvrdit</button>
+            </div>
+            <br />
+            <br />
+            <hr>
+            <a asp-action="Login" class="btn btn-success btn-block text-white" type="button" id="btn-signin"><i class="fas fa-sign-in-alt"></i> Přihlásit se do existujícího účtu</a>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,64 @@
+﻿@model TripCreateViewModel
+<div class="modal fade" id="createTripModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-area="User" asp-controller="Trip" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Vytvořit nový výlet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="destination-autocomplete" class="form-label">Destinace</label>
+                        <input id="destination-autocomplete" type="text" class="form-control" autocomplete="off" />
+
+                        <input asp-for="DestinationLocation.GooglePlaceId" type="hidden" />
+                        <span asp-validation-for="DestinationLocation.GooglePlaceId" class="text-danger"></span>
+
+                        <input asp-for="DestinationName" type="hidden" />
+                        <span asp-validation-for="DestinationName" class="text-danger"></span>
+
+                        <input asp-for="Country" type="hidden" />
+
+                        <input asp-for="DestinationLocation.Latitude" type="hidden" />
+                        <span asp-validation-for="DestinationLocation.Latitude" class="text-danger"></span>
+
+                        <input asp-for="DestinationLocation.Longitude" type="hidden" />
+                        <span asp-validation-for="DestinationLocation.Longitude" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StartDate" class="form-label"></label>
+                        <input asp-for="StartDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="EndDate" class="form-label"></label>
+                        <input asp-for="EndDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">Vytvořit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

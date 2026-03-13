@@ -1,0 +1,96 @@
+﻿@model IEnumerable<TripOverviewViewModel>
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Přehled výletů";
+    var currentSort = ViewData["CurrentSort"] as string ?? "id_desc";
+}
+<div class="container mt-4">
+    <div class="row align-items-center mb-3">
+        <div class="col">
+            <h1>Moje výlety</h1>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTripModal">
+                Vytvořit nový výlet
+            </button>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="dropdown mb-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                Řadit
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item @(currentSort=="id_desc" ? "active" : "")" asp-action="TripsOverview" asp-route-sortOrder="id_desc">
+                        Od nejnovějších
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item @(currentSort=="id_asc" ? "active" : "")" asp-action="TripsOverview" asp-route-sortOrder="id_asc">
+                        Od nejstarších
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item @(currentSort=="date_asc" ? "active" : "")" asp-action="TripsOverview" asp-route-sortOrder="date_asc">
+                        Od nejdřívějších
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item @(currentSort=="date_desc" ? "active" : "")" asp-action="TripsOverview" asp-route-sortOrder="date_desc">
+                        Od nejpozdějších
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        <div class="row gx-3 gy-4">
+            @foreach (var trip in Model)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="dropdown position-absolute top-0 end-0 m-2">
+                            @if (trip.IsOwner)
+                            {
+                            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                <span>&vellip;</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <form asp-controller="Trip" asp-action="Delete" asp-route-tripId="@trip.TripId" method="post" onsubmit="return ConfirmDeleteTrip();">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            Smazat výlet
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                            }
+                        </div>
+                        <a asp-area="User" asp-controller="Trip" asp-action="TripDetail" asp-route-tripId="@trip.TripId" class="text-decoration-none text-body">
+                            <div class="card-img-top bg-secondary trip-card-image" style="background-image: url('@Html.Raw(trip.PhotoReference)');"></div>
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <h5 class="card-title text-center">@trip.Name</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Nemáte zatím žádné výlety.</p>
+    }
+</div>
+
+@await Html.PartialAsync("_CreateTripModal", new TripCreateViewModel())
+
+@section Scripts {
+    <script src="~/js/dialogs.js"></script>
+    <script src="~/js/trips-overview.js"></script>
+
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApiKey"]&libraries=places&callback=initTripAutocomplete"></script>
+}

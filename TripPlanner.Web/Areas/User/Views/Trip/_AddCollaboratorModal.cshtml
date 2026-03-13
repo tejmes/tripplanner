@@ -1,0 +1,29 @@
+﻿@model TripDetailViewModel
+<div class="modal fade" id="addCollaboratorModal" data-trip-id="@Model.Itinerary.TripId" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-area="User" asp-controller="Collaborator" asp-action="AddCollaborator" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="tripId" value="@Model.Itinerary.TripId" />
+            <input type="hidden" id="userId" name="userId" />
+
+            <div class="modal-header">
+                <h5 class="modal-title">Přidat uživatele</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="userSearch">Jméno nebo e-mail</label>
+                <input id="userSearch" class="form-control" placeholder="Začni psát…" autocomplete="off" />
+                <div id="suggestions" class="list-group position-absolute w-100" style="z-index:2000;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnAdd" type="submit" class="btn btn-primary" disabled>
+                    Přidat
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Zrušit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

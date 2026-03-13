@@ -1,0 +1,31 @@
+﻿@model TripDetailViewModel
+<div class="modal fade" id="removeCollaboratorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-area="User" asp-controller="Collaborator" asp-action="RemoveCollaborator" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="tripId" value="@Model.Itinerary.TripId" />
+            <div class="modal-header">
+                <h5 class="modal-title">Odebrat uživatele</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="userToRemove" class="form-label">Vyber uživatele:</label>
+                    <select class="form-select" id="userToRemove" name="userId" required>
+                        @foreach (var user in Model.Budget.Collaborators)
+                        {
+                            <option value="@user.UserId">@user.UserName (@user.Email)</option>
+                        }
+                    </select>
+                </div>
+                <div class="alert alert-warning small">
+                    Odebráním ztratí uživatel přístup k tomuto výletu.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                <button type="submit" class="btn btn-danger">Odebrat</button>
+            </div>
+        </form>
+    </div>
+</div>

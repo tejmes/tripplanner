@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Domovská stránka";
+}
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content text-center">
+        <h1 class="display-3 fw-bold">Plánujte výlety jako profík</h1>
+        <p class="lead mb-4">
+            Vše, co potřebujete k snadnému a společnému plánování cest, itinerářů i rozpočtů najdete na jednom místě.
+        </p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a class="btn btn-lg btn-primary me-3" asp-area="User" asp-controller="Trip" asp-action="TripsOverview">Moje výlety</a>
+        }
+        else
+        {
+            <a class="btn btn-lg btn-primary me-3" asp-area="Security" asp-controller="Account" asp-action="Register">Založit účet zdarma</a>
+        }
+    </div>
+</div>
+<div class="container my-5" id="features">
+    <h2 class="text-center mb-4">Co dokáže TripPlanner?</h2>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">📍</div>
+                <h5 class="card-title">Přehledné itineráře</h5>
+                <p class="card-text">
+                    Rozdělte výlet na jednotlivé dny a ke každému přidejte místa, která chcete navštívit.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">💰</div>
+                <h5 class="card-title">Správa rozpočtu</h5>
+                <p class="card-text">
+                    Přidávejte výdaje, sdílejte je s přáteli a sledujte, kdo komu kolik dluží.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">📝</div>
+                <h5 class="card-title">Checklisty</h5>
+                <p class="card-text">
+                    Vytvořte si seznam úkolů (např. balení, nákupy) a odškrtávejte položky.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">🗺️</div>
+                <h5 class="card-title">Navigace v mapě</h5>
+                <p class="card-text">
+                    Sledujte všechny vaše vybrané body na interaktivní mapě a naplánujte si trasu mezi nimi.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">☀️</div>
+                <h5 class="card-title">Předpověď počasí</h5>
+                <p class="card-text">
+                    Integrovaná předpověď počasí na každý den výletu, abyste věděli, kdy vzít plavky a kdy bundu.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card p-4 h-100 text-center">
+                <div class="feature-icon">🤝</div>
+                <h5 class="card-title">Spolupráce s přáteli</h5>
+                <p class="card-text">
+                    Pozvěte ostatní, aby vám pomohli s plánováním. Sdílejte trasu, rozpočet i itinerář.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
